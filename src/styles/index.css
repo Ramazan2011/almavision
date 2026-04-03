@@ -1,0 +1,35 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+@import 'leaflet/dist/leaflet.css';
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .max-w-7xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  header > div {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  header > div > div:last-child {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+/* Smooth transitions for dark mode */
+* {
+  transition-property: background-color, border-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Leaflet map z-index fix */
+.leaflet-container {
+  z-index: 1 !important;
+}
