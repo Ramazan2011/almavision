@@ -83,7 +83,7 @@ export function AdvancedFiltering({ onFilterChange }: AdvancedFilteringProps) {
   };
 
   return (
-    <Card className="p-4 md:p-6 dark:bg-gray-800 dark:border-gray-700">
+    <Card className="p-4 md:p-6 dark:bg-gray-900 dark:border-gray-700">
       <div className="space-y-4">
         {/* Quick Filters Row */}
         <div className="flex flex-wrap items-center gap-3">
@@ -213,10 +213,10 @@ export function AdvancedFiltering({ onFilterChange }: AdvancedFilteringProps) {
         <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-gray-600 dark:text-gray-400">{t('active')}:</span>
-            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">
+            <span className="px-2 py-1 bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-blue-400 rounded">
               {dateRanges.find(r => r.value === filters.dateRange)?.label}
             </span>
-            <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded">
+            <span className="px-2 py-1 bg-purple-100 dark:bg-gray-700 text-purple-700 dark:text-purple-400 rounded">
               {categories.find(c => c.value === filters.category)?.label}
             </span>
             {filters.zone !== 'all' && (

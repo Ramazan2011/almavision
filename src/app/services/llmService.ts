@@ -1,3 +1,5 @@
+import { getOpenRouterApiKey } from './configService';
+
 export type InsightSeverity = 'critical' | 'warning' | 'info' | 'success' | 'danger' | 'caution';
 
 export interface AIInsight {
@@ -144,14 +146,14 @@ export async function generateInsights(
   context: DashboardContext,
   callbacks?: StreamingCallbacks
 ): Promise<AIInsight[]> {
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const apiKey = await getOpenRouterApiKey();
   
-  console.log('[AI Insights] API key present:', !!apiKey && apiKey !== 'your_openrouter_api_key_here');
+  console.log('[AI Insights] API key present:', !!apiKey);
   console.log('[AI Insights] API key starts with:', apiKey ? apiKey.substring(0, 10) + '...' : 'none');
 
-  if (!apiKey || apiKey === '' || apiKey === 'your_openrouter_api_key_here') {
+  if (!apiKey || apiKey === '') {
     console.warn('[AI Insights] No valid OpenRouter API key found. Falling back to default static insights.');
-    console.warn('[AI Insights] Please set VITE_OPENROUTER_API_KEY in your .env file with a key from https://openrouter.ai/');
+    console.warn('[AI Insights] Please set openrouterApiKey in public/config.json with a key from https://openrouter.ai/');
     return DEFAULT_INSIGHTS;
   }
 
@@ -324,10 +326,10 @@ export async function generateChartInsight(
   config: ChartInsightConfig,
   callbacks?: StreamingCallbacks
 ): Promise<string> {
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const apiKey = await getOpenRouterApiKey();
 
-  if (!apiKey || apiKey === '' || apiKey === 'your_openrouter_api_key_here') {
-    return 'Add VITE_OPENROUTER_API_KEY to .env for live AI analysis.';
+  if (!apiKey || apiKey === '') {
+    return 'Add openrouterApiKey to public/config.json for live AI analysis.';
   }
 
   const prompt = `You are an expert AI Smart City Analyst for Almaty, Kazakhstan.

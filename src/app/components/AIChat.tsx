@@ -107,9 +107,9 @@ User question: ${input}`;
   };
 
   return (
-    <Card className="fixed bottom-4 left-4 z-50 w-96 max-h-[500px] flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl">
+    <Card className="fixed bottom-4 left-4 z-50 w-96 max-h-[500px] flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 rounded-t-lg">
+      <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-800 rounded-t-lg">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-purple-600" />
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{t('aiChat')}</h3>

@@ -69,13 +69,13 @@ const getTypeStyle = (type: string) => {
     case 'warning':
       return { color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/30', border: 'border-orange-200 dark:border-orange-800' };
     case 'caution':
-      return { color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-950/30', border: 'border-yellow-200 dark:border-yellow-800' };
+      return { color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-gray-800', border: 'border-yellow-200 dark:border-gray-700' };
     case 'info':
-      return { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30', border: 'border-blue-200 dark:border-blue-800' };
+      return { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-gray-800', border: 'border-blue-200 dark:border-gray-700' };
     case 'success':
-      return { color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-950/30', border: 'border-green-200 dark:border-green-800' };
+      return { color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-gray-800', border: 'border-green-200 dark:border-gray-700' };
     default:
-      return { color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-50 dark:bg-gray-800/50', border: 'border-gray-200 dark:border-gray-700' };
+      return { color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-50 dark:bg-gray-800', border: 'border-gray-200 dark:border-gray-700' };
   }
 };
 
@@ -253,7 +253,7 @@ export function AIInsightsWidget({ filters, weatherData, transportData, energyDa
   }, [filters.zone, filters.dateRange, weatherData?.current.temp]);
 
   return (
-    <Card className="p-4 md:p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 border-blue-200 dark:border-gray-700">
+    <Card className="p-4 md:p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-900 border-blue-200 dark:border-gray-700">
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
         <h2 className="text-lg dark:text-gray-100">{t('aiInsights')}</h2>
@@ -262,7 +262,7 @@ export function AIInsightsWidget({ filters, weatherData, transportData, energyDa
       <div className="space-y-3">
         {isStreaming ? (
           // Streaming state - show raw text as it arrives
-          <div className="p-4 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 min-h-[120px]">
+          <div className="p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 min-h-[120px]">
             <div className="flex items-center gap-2 mb-2">
               <Loader2 className="w-4 h-4 animate-spin text-purple-600 dark:text-purple-400" />
               <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">{t('aiAnalyzing')}</span>
@@ -326,7 +326,7 @@ export function AIInsightsWidget({ filters, weatherData, transportData, energyDa
         ) : (
           // Empty state
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 animate-pulse flex items-start gap-3">
+            <div key={i} className="p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 animate-pulse flex items-start gap-3">
               <div className="w-5 h-5 bg-gray-300 dark:bg-gray-600 rounded-full shrink-0"></div>
               <div className="flex-1 space-y-2 py-1">
                 <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/3"></div>

@@ -72,7 +72,7 @@ export function IncidentReportWidget() {
   };
 
   return (
-    <Card className="p-6 dark:bg-gray-800 dark:border-gray-700">
+    <Card className="p-6 dark:bg-gray-900 dark:border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-red-500" />

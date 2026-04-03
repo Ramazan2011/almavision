@@ -151,11 +151,11 @@ function DashboardContent() {
   const transportChange = transport.length > 1 ? (((transport[transport.length - 1].bus - transport[0].bus) / transport[0].bus) * 100).toFixed(1) : '0.0';
 
   const stats = [
-    { title: t('population'), value: popData.val, change: popData.change, icon: Users, trend: "up" as const, category: "demographics", color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30" },
-    { title: t('energyUsage'), value: `${(displayEnergy[displayEnergy.length - 1]?.consumption || 0)} МВт`, change: enabled ? t('debugMode') : `${energyChange}% ${timeframeLabel}`, icon: Zap, trend: Number(energyChange) >= 0 ? "up" as const : "down" as const, category: "energy", color: "text-yellow-600", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
-    { title: t('waterUsage'), value: `${(displayWater[displayWater.length - 1]?.residential || 0)}м³`, change: enabled ? t('debugMode') : `${waterChange}% ${timeframeLabel}`, icon: Droplet, trend: Number(waterChange) >= 0 ? "up" as const : "down" as const, category: "water", color: "text-cyan-600", bg: "bg-cyan-100 dark:bg-cyan-900/30" },
-    { title: t('publicTransport'), value: `${(displayTransport_data[displayTransport_data.length - 1]?.bus || 0)}`, change: enabled ? t('debugMode') : `${transportChange}% ${timeframeLabel}`, icon: Bus, trend: Number(transportChange) >= 0 ? "up" as const : "down" as const, category: "transport", color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30" },
-    { title: t('airQuality'), value: airQuality?.aqi ?? '--', change: airQuality?.description ?? t('aiGenerating'), icon: Leaf, trend: airQuality && airQuality.aqi > 50 ? 'up' as const : 'down' as const, category: "weather", color: "text-green-600", bg: "bg-green-100 dark:bg-green-900/30", loading: loading },
+    { title: t('population'), value: popData.val, change: popData.change, icon: Users, trend: "up" as const, category: "demographics", color: "text-blue-600", bg: "bg-blue-100 dark:bg-gray-800" },
+    { title: t('energyUsage'), value: `${(displayEnergy[displayEnergy.length - 1]?.consumption || 0)} МВт`, change: enabled ? t('debugMode') : `${energyChange}% ${timeframeLabel}`, icon: Zap, trend: Number(energyChange) >= 0 ? "up" as const : "down" as const, category: "energy", color: "text-yellow-600", bg: "bg-yellow-100 dark:bg-gray-800" },
+    { title: t('waterUsage'), value: `${(displayWater[displayWater.length - 1]?.residential || 0)}м³`, change: enabled ? t('debugMode') : `${waterChange}% ${timeframeLabel}`, icon: Droplet, trend: Number(waterChange) >= 0 ? "up" as const : "down" as const, category: "water", color: "text-cyan-600", bg: "bg-cyan-100 dark:bg-gray-800" },
+    { title: t('publicTransport'), value: `${(displayTransport_data[displayTransport_data.length - 1]?.bus || 0)}`, change: enabled ? t('debugMode') : `${transportChange}% ${timeframeLabel}`, icon: Bus, trend: Number(transportChange) >= 0 ? "up" as const : "down" as const, category: "transport", color: "text-purple-600", bg: "bg-purple-100 dark:bg-gray-800" },
+    { title: t('airQuality'), value: airQuality?.aqi ?? '--', change: airQuality?.description ?? t('aiGenerating'), icon: Leaf, trend: airQuality && airQuality.aqi > 50 ? 'up' as const : 'down' as const, category: "weather", color: "text-green-600", bg: "bg-green-100 dark:bg-gray-800", loading: loading },
     { title: t('buildingPermits'), value: getPermits().toString(), change: `${t('last7d')}`, icon: Building2, trend: "up" as const, category: "construction", color: "text-orange-600", bg: "bg-orange-100 dark:bg-orange-900/30" },
   ];
 
@@ -173,7 +173,7 @@ function DashboardContent() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
           <div>
             <h1 className="text-xl md:text-2xl dark:text-gray-100">{t('appTitle')}</h1>
