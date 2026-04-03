@@ -4,6 +4,7 @@ import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import L from 'leaflet';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 // Fix for default Leaflet icon paths in Vite/Webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -26,56 +27,57 @@ interface MapZone {
 }
 
 export function EnhancedTrafficMap() {
+  const { t } = useAppSettings();
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const zones: MapZone[] = [
     {
-      id: 'almaly', name: 'Алмалинский',
+      id: 'almaly', name: t('almaly'),
       lat: 43.2389, lng: 76.8897,
       status: 'heavy', incidents: 3, avgSpeed: 15, vehicles: 2450,
-      aiInsight: 'Сильные заторы в центре города. Время до разгрузки: 45 мин.'
+      aiInsight: t('trafficMapHeavy') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'turksib', name: 'Турксибский',
+      id: 'turksib', name: t('turksib'),
       lat: 43.3389, lng: 76.9397,
       status: 'moderate', incidents: 1, avgSpeed: 35, vehicles: 1230,
-      aiInsight: 'Трафик в норме near аэропорта. Инцидент устранён.'
+      aiInsight: t('trafficMapModerate') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'medeu', name: 'Медеуский',
+      id: 'medeu', name: t('medeu'),
       lat: 43.2189, lng: 76.9697,
       status: 'light', incidents: 0, avgSpeed: 55, vehicles: 680,
-      aiInsight: 'Оптимальные условия на восточном маршруте.'
+      aiInsight: t('trafficMapLight') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'bostandyk', name: 'Бостандыкский',
+      id: 'bostandyk', name: t('bostandyk'),
       lat: 43.2089, lng: 76.8997,
       status: 'moderate', incidents: 2, avgSpeed: 28, vehicles: 1560,
-      aiInsight: 'Замедления на пр. Аль-Фараби.'
+      aiInsight: t('trafficMapModerate') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'auezov', name: 'Ауэзовский',
+      id: 'auezov', name: t('auezov'),
       lat: 43.2289, lng: 76.8497,
       status: 'light', incidents: 0, avgSpeed: 48, vehicles: 890,
-      aiInsight: 'Лёгкий трафик в западных жилых зонах.'
+      aiInsight: t('trafficMapLight') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'alatau', name: 'Алатауский',
+      id: 'alatau', name: t('alatau'),
       lat: 43.2846, lng: 76.8290,
       status: 'light', incidents: 0, avgSpeed: 45, vehicles: 920,
-      aiInsight: 'Плавный трафик в северо-западной промзоне.'
+      aiInsight: t('trafficMapLight') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'nauryzbai', name: 'Наурызбайский',
+      id: 'nauryzbai', name: t('nauryzbai'),
       lat: 43.1895, lng: 76.7865,
       status: 'light', incidents: 0, avgSpeed: 40, vehicles: 500,
-      aiInsight: 'Минимальный трафик в западных пригородах.'
+      aiInsight: t('trafficMapLight') + ' ' + t('aiAnalysisBadge')
     },
     {
-      id: 'zhetysu', name: 'Жетысуский',
+      id: 'zhetysu', name: t('zhetysu'),
       lat: 43.2954, lng: 76.9423,
       status: 'moderate', incidents: 1, avgSpeed: 30, vehicles: 1100,
-      aiInsight: 'Стандартный объём трафика.'
+      aiInsight: t('trafficMapModerate') + ' ' + t('aiAnalysisBadge')
     },
   ];
 
@@ -88,6 +90,15 @@ export function EnhancedTrafficMap() {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'heavy': return t('trafficMapHeavy');
+      case 'moderate': return t('trafficMapModerate');
+      case 'light': return t('trafficMapLight');
+      default: return t('trafficMapLight');
+    }
+  };
+
   const selectedZoneData = zones.find(z => z.id === selectedZone);
   const totalIncidents = zones.reduce((sum, z) => sum + z.incidents, 0);
   const avgCitySpeed = Math.round(zones.reduce((sum, z) => sum + z.avgSpeed, 0) / zones.length);
@@ -96,9 +107,9 @@ export function EnhancedTrafficMap() {
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg">Интерактивная карта трафика</h2>
+          <h2 className="text-lg">{t('trafficMapTitle')}</h2>
           <Badge variant="outline" className="text-xs">
-            Интерактив
+            {t('interactiveBadge')}
           </Badge>
         </div>
         <Navigation className="w-5 h-5 text-gray-500" />
@@ -108,15 +119,15 @@ export function EnhancedTrafficMap() {
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="bg-gray-50 p-3 rounded-lg text-center">
           <div className="text-2xl">{totalIncidents}</div>
-          <div className="text-xs text-gray-600">Активных инцидентов</div>
+          <div className="text-xs text-gray-600">{t('activeIncidentsLabel')}</div>
         </div>
         <div className="bg-gray-50 p-3 rounded-lg text-center">
           <div className="text-2xl">{avgCitySpeed} км/ч</div>
-          <div className="text-xs text-gray-600">Ср. скорость</div>
+          <div className="text-xs text-gray-600">{t('avgSpeedCity')}</div>
         </div>
         <div className="bg-gray-50 p-3 rounded-lg text-center">
           <div className="text-2xl">{zones.filter(z => z.status === 'heavy').length}</div>
-          <div className="text-xs text-gray-600">Заторных зон</div>
+          <div className="text-xs text-gray-600">{t('congestionZones')}</div>
         </div>
       </div>
 
@@ -148,8 +159,8 @@ export function EnhancedTrafficMap() {
               >
                 <Popup>
                   <div className="font-semibold text-sm">{zone.name}</div>
-                  <div className="text-xs text-gray-600">Speed: {zone.avgSpeed} km/h</div>
-                  <div className="text-xs text-gray-600">Incidents: {zone.incidents}</div>
+                  <div className="text-xs text-gray-600">{t('speedLabel')}: {zone.avgSpeed} km/h</div>
+                  <div className="text-xs text-gray-600">{t('incidentsLabel')}: {zone.incidents}</div>
                 </Popup>
               </Marker>
             </React.Fragment>
@@ -168,20 +179,20 @@ export function EnhancedTrafficMap() {
                   variant={selectedZoneData.status === 'heavy' ? 'destructive' : 'outline'}
                   className="text-xs capitalize"
                 >
-                  {selectedZoneData.status === 'heavy' ? 'Сильный' : selectedZoneData.status === 'moderate' ? 'Умеренный' : 'Лёгкий'}
+                  {getStatusText(selectedZoneData.status)}
                 </Badge>
               </h3>
               <div className="grid grid-cols-3 gap-3 my-2 text-xs">
                 <div>
-                  <div className="text-gray-600">Скорость</div>
+                  <div className="text-gray-600">{t('speedLabel')}</div>
                   <div className="font-medium">{selectedZoneData.avgSpeed} км/ч</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">Авто</div>
+                  <div className="text-gray-600">{t('vehiclesLabel')}</div>
                   <div className="font-medium">{selectedZoneData.vehicles.toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">Инциденты</div>
+                  <div className="text-gray-600">{t('incidentsLabel')}</div>
                   <div className="font-medium">{selectedZoneData.incidents}</div>
                 </div>
               </div>
@@ -190,7 +201,7 @@ export function EnhancedTrafficMap() {
           <div className="flex gap-2 p-3 bg-white rounded border border-purple-200">
             <Sparkles className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="text-xs font-medium text-purple-900 mb-1">ИИ-анализ</div>
+              <div className="text-xs font-medium text-purple-900 mb-1">{t('aiAnalysisBadge')}</div>
               <p className="text-xs text-gray-700">{selectedZoneData.aiInsight}</p>
             </div>
           </div>
@@ -200,15 +211,15 @@ export function EnhancedTrafficMap() {
       <div className="flex items-center gap-4 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
-          <span>Лёгкий</span>
+          <span>{t('trafficMapLight')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#f59e0b]"></div>
-          <span>Умеренный</span>
+          <span>{t('trafficMapModerate')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
-          <span>Сильный</span>
+          <span>{t('trafficMapHeavy')}</span>
         </div>
       </div>
     </Card>

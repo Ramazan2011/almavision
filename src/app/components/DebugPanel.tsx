@@ -1,5 +1,6 @@
 import { X, RefreshCw, Bug } from 'lucide-react';
 import { useDebug, DebugData } from '../contexts/DebugContext';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 interface DebugPanelProps {
   onRegenerateAll: () => void;
@@ -30,6 +31,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export function DebugPanel({ onRegenerateAll, regenerating }: DebugPanelProps) {
+  const { t } = useAppSettings();
   const { enabled, toggleEnabled, data, updateData, resetData } = useDebug();
 
   if (!enabled) {
@@ -42,20 +44,20 @@ export function DebugPanel({ onRegenerateAll, regenerating }: DebugPanelProps) {
       <div className="flex items-center justify-between p-3 border-b border-gray-700 bg-purple-900/30">
         <div className="flex items-center gap-2">
           <Bug className="w-4 h-4 text-purple-400" />
-          <h3 className="text-sm font-semibold text-purple-300">Режим отладки</h3>
+          <h3 className="text-sm font-semibold text-purple-300">{t('debugPanelTitle')}</h3>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={resetData}
             className="p-1 hover:bg-gray-700 rounded transition-colors"
-            title="Сбросить значения"
+            title={t('resetTooltip')}
           >
             <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
           </button>
           <button
             onClick={toggleEnabled}
             className="p-1 hover:bg-gray-700 rounded transition-colors"
-            title="Закрыть панель отладки"
+            title={t('closeDebugTooltip')}
           >
             <X className="w-3.5 h-3.5 text-gray-400" />
           </button>
@@ -70,79 +72,79 @@ export function DebugPanel({ onRegenerateAll, regenerating }: DebugPanelProps) {
           className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:opacity-50 text-white text-xs font-medium py-2 px-3 rounded transition-colors"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${regenerating ? 'animate-spin' : ''}`} />
-          {regenerating ? 'Генерация...' : 'Перегенерировать все ИИ-анализы'}
+          {regenerating ? t('debugGenerating') : t('regenerateAllDebug')}
         </button>
       </div>
 
       {/* Data Overrides */}
       <div className="p-3 space-y-3">
-        <Section title="Энергия (МВт)">
+        <Section title={t('energySectionTitle')}>
           <NumberInput
-            label="Потребление"
+            label={t('consumptionLabel')}
             value={data.energy.consumption}
             onChange={(v) => updateData('energy', 'consumption', v)}
           />
           <NumberInput
-            label="Производство"
+            label={t('productionLabel')}
             value={data.energy.production}
             onChange={(v) => updateData('energy', 'production', v)}
           />
         </Section>
 
-        <Section title="Транспорт (ед.)">
+        <Section title={t('transportSectionTitle')}>
           <NumberInput
-            label="Автобусы"
+            label={t('busesLabel')}
             value={data.transport.bus}
             onChange={(v) => updateData('transport', 'bus', v)}
           />
           <NumberInput
-            label="Метро"
+            label={t('metroLabel')}
             value={data.transport.metro}
             onChange={(v) => updateData('transport', 'metro', v)}
           />
           <NumberInput
-            label="Трамваи"
+            label={t('tramsLabel')}
             value={data.transport.tram}
             onChange={(v) => updateData('transport', 'tram', v)}
           />
         </Section>
 
-        <Section title="Вода (м³)">
+        <Section title={t('waterSectionTitle')}>
           <NumberInput
-            label="Жилые"
+            label={t('residentialShortLabel')}
             value={data.water.residential}
             onChange={(v) => updateData('water', 'residential', v)}
           />
           <NumberInput
-            label="Коммерч."
+            label={t('commercialShortLabel')}
             value={data.water.commercial}
             onChange={(v) => updateData('water', 'commercial', v)}
           />
           <NumberInput
-            label="Промышл."
+            label={t('industrialShortLabel')}
             value={data.water.industrial}
             onChange={(v) => updateData('water', 'industrial', v)}
           />
         </Section>
 
-        <Section title="Погода">
+        <Section title={t('weatherSectionTitle')}>
           <NumberInput
-            label="Темп. (°C)"
+            label={t('tempLabelShort')}
             value={data.weather.temp}
             onChange={(v) => updateData('weather', 'temp', v)}
           />
           <NumberInput
-            label="Ветер (км/ч)"
+            label={t('windLabelShort')}
             value={data.weather.windSpeed}
             onChange={(v) => updateData('weather', 'windSpeed', v)}
           />
           <NumberInput
-            label="Влажность (%)"
+            label={t('humidityLabelShort')}
             value={data.weather.humidity}
             onChange={(v) => updateData('weather', 'humidity', v)}
           />
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 w-24 shrink-0">Условия</label>
+            <label className="text-xs text-gray-400 w-24 shrink-0">{t('conditionLabelShort')}</label>
             <input
               type="text"
               value={data.weather.condition}
@@ -155,7 +157,7 @@ export function DebugPanel({ onRegenerateAll, regenerating }: DebugPanelProps) {
 
       {/* Footer */}
       <div className="p-2 border-t border-gray-700 text-center">
-        <p className="text-xs text-gray-500">Изменения применятся при следующей генерации ИИ</p>
+        <p className="text-xs text-gray-500">{t('debugFooter')}</p>
       </div>
     </div>
   );

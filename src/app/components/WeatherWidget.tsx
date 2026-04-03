@@ -1,6 +1,7 @@
 import { Cloud, CloudRain, Sun, Wind, Droplets } from 'lucide-react';
 import { Card } from './ui/card';
 import { WeatherData } from '../services/weatherService';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 interface WeatherWidgetProps {
   data?: WeatherData | null;
@@ -20,6 +21,8 @@ const WeatherIcon = ({ condition, className }: { condition: string; className?: 
 };
 
 export function WeatherWidget({ data, loading, dataType }: WeatherWidgetProps) {
+  const { t } = useAppSettings();
+  
   if (loading || !data) {
     return (
       <Card className="p-6 animate-pulse">
@@ -44,8 +47,8 @@ export function WeatherWidget({ data, loading, dataType }: WeatherWidgetProps) {
   return (
     <Card className="p-6">
       <h2 className="text-lg mb-4">
-        {isPredicted ? 'Прогноз погоды' : 'Погодные условия'}
-        {isPredicted && <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">Прогноз</span>}
+        {isPredicted ? t('weatherForecastTitle') : t('weatherConditionsTitle')}
+        {isPredicted && <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">{t('forecastBadge')}</span>}
       </h2>
       
       <div className="flex items-center justify-between mb-6">
@@ -64,21 +67,21 @@ export function WeatherWidget({ data, loading, dataType }: WeatherWidgetProps) {
         <div className="flex items-center gap-2">
           <Wind className="w-5 h-5 text-gray-500" />
           <div>
-            <div className="text-sm text-gray-500">Скорость ветра</div>
+            <div className="text-sm text-gray-500">{t('windSpeedLabel')}</div>
             <div>{data.current.windSpeed} км/ч</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Droplets className="w-5 h-5 text-gray-500" />
           <div>
-            <div className="text-sm text-gray-500">Влажность</div>
+            <div className="text-sm text-gray-500">{t('humidityLabel')}</div>
             <div>{data.current.humidity}%</div>
           </div>
         </div>
       </div>
 
       <div className="mt-6 pt-6 border-t">
-        <h3 className="text-sm mb-3">Прогноз на 5 дней</h3>
+        <h3 className="text-sm mb-3">{t('forecast5dayTitle')}</h3>
         <div className="grid grid-cols-5 gap-2">
           {data.forecast.map((forecast) => (
             <div key={forecast.day} className="text-center">

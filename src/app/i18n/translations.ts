@@ -148,6 +148,109 @@ export const translations = {
     incidentOther: 'Другое',
     incidentsLog: 'Журнал инцидентов',
     noIncidents: 'Инцидентов не зарегистрировано',
+
+    // Default AI Insights
+    energyDefaultInsight: 'Стабильность сети в норме за этот период. Тренды потребления соответствуют прогнозируемым показателям.',
+    transportDefaultInsight: 'Метро наиболее востребовано. Рекомендуется динамическая корректировка маршрутов.',
+    waterDefaultInsight: 'Объёмы воды стабильны по всем секторам за выбранный период. Аномалий не обнаружено.',
+
+    // Traffic Widget
+    trafficStatusTitle: 'Статус трафика',
+    activeIncidentsAlert: 'активных инцидентов',
+    trafficHeavyAlert: 'Крупные заторы в Алмалинском районе. Рассмотрите альтернативные маршруты.',
+    trafficHeavy: 'Сильный',
+    trafficModerate: 'Умеренный',
+    trafficLight: 'Лёгкий',
+    trafficLabel: 'трафик',
+    incidentsCount: 'инцидентов',
+    avgSpeedLabel: 'Ср. скорость',
+    vehiclesPerMinLabel: 'Авто/мин',
+    avgCommuteLabel: 'Ср. поездка',
+
+    // Weather Widget
+    weatherForecastTitle: 'Прогноз погоды',
+    weatherConditionsTitle: 'Погодные условия',
+    forecastBadge: 'Прогноз',
+    windSpeedLabel: 'Скорость ветра',
+    humidityLabel: 'Влажность',
+    forecast5dayTitle: 'Прогноз на 5 дней',
+
+    // Chart AI Insights
+    aiAnalysisShort: 'ИИ-анализ',
+    generateAIInsight: 'Сгенерировать ИИ-анализ',
+    rateLimitedTryAgain: 'Ограничение. Попробуйте через',
+    secondsSuffix: 'с',
+
+    // Energy Chart
+    energyChartTitle: 'Потребление и производство энергии',
+    consumptionMW: 'Потребление (МВт)',
+    productionMW: 'Производство (МВт)',
+
+    // Transport Chart
+    transportChartTitle: 'Использование общественного транспорта',
+    busLabel: 'Автобус',
+    metroLabel: 'Метро',
+    tramLabel: 'Трамвай',
+
+    // Water Chart
+    waterChartTitle: 'Потребление воды по секторам (м³)',
+    residentialLabel: 'Жилые',
+    commercialLabel: 'Коммерч.',
+    industrialLabel: 'Промышл.',
+
+    // Traffic Map
+    trafficMapTitle: 'Интерактивная карта трафика',
+    interactiveBadge: 'Интерактив',
+    activeIncidentsLabel: 'Активных инцидентов',
+    avgSpeedCity: 'Ср. скорость',
+    congestionZones: 'Заторных зон',
+    speedLabel: 'Скорость',
+    vehiclesLabel: 'Авто',
+    incidentsLabel: 'Инциденты',
+    aiAnalysisBadge: 'ИИ-анализ',
+    trafficMapHeavy: 'Сильный',
+    trafficMapModerate: 'Умеренный',
+    trafficMapLight: 'Лёгкий',
+    sensorsLabel: 'Датчики',
+
+    // Weather Map
+    weatherMapTitle: 'Карта мониторинга погоды',
+    tempShort: 'Темп.',
+    humidityShort: 'Влажн.',
+    avgTemp: 'Ср. температура',
+    avgHumidity: 'Ср. влажность',
+    sunnyZones: 'Ясных зон',
+    weatherAIForecast: 'ИИ-прогноз погоды',
+    pressureLabel: 'Давл.',
+
+    // Date Range Filter
+    periodLabel: 'Период',
+    categoryLabel: 'Категория',
+    shownLabel: 'Показано',
+    allCategoriesLabel: 'Все категории',
+
+    // Debug Panel
+    debugPanelTitle: 'Режим отладки',
+    resetTooltip: 'Сбросить значения',
+    closeDebugTooltip: 'Закрыть панель отладки',
+    regenerateAllDebug: 'Перегенерировать все ИИ-анализы',
+    debugGenerating: 'Генерация...',
+    energySectionTitle: 'Энергия (МВт)',
+    transportSectionTitle: 'Транспорт (ед.)',
+    waterSectionTitle: 'Вода (м³)',
+    weatherSectionTitle: 'Погода',
+    debugFooter: 'Изменения применятся при следующей генерации ИИ',
+    consumptionLabel: 'Потребление',
+    productionLabel: 'Производство',
+    busesLabel: 'Автобусы',
+    tramsLabel: 'Трамваи',
+    residentialShortLabel: 'Жилые',
+    commercialShortLabel: 'Коммерч.',
+    industrialShortLabel: 'Промышл.',
+    tempLabelShort: 'Темп. (°C)',
+    windLabelShort: 'Ветер (км/ч)',
+    humidityLabelShort: 'Влажность (%)',
+    conditionLabelShort: 'Условия',
   },
   kk: {
     // Header
@@ -296,6 +399,109 @@ export const translations = {
     incidentOther: 'Басқа',
     incidentsLog: 'Оқиғалар журналы',
     noIncidents: 'Оқиғалар тіркелмеді',
+
+    // Default AI Insights
+    energyDefaultInsight: 'Желінің тұрақтылығы қалыпты. Тұтыну трендтері болжамға сәйкес.',
+    transportDefaultInsight: 'Метро ең көп талап етіледі. Маршруттарды динамикалық түрде түзету ұсынылады.',
+    waterDefaultInsight: 'Су көлемі барлық секторлар бойынша тұрақты. Ауытқулар анықталмады.',
+
+    // Traffic Widget
+    trafficStatusTitle: 'Трафик жағдайы',
+    activeIncidentsAlert: 'белсенді оқиға',
+    trafficHeavyAlert: 'Алмалы ауданында қатты кептеліс. Балама маршруттарды қарастырыңыз.',
+    trafficHeavy: 'Ауыр',
+    trafficModerate: 'Орташа',
+    trafficLight: 'Жеңіл',
+    trafficLabel: 'трафик',
+    incidentsCount: 'оқиға',
+    avgSpeedLabel: 'Орт. жылдамдық',
+    vehiclesPerMinLabel: 'Көлік/мин',
+    avgCommuteLabel: 'Орт. жол',
+
+    // Weather Widget
+    weatherForecastTitle: 'Ауа райы болжамы',
+    weatherConditionsTitle: 'Ауа райы жағдайлары',
+    forecastBadge: 'Болжам',
+    windSpeedLabel: 'Жел жылдамдығы',
+    humidityLabel: 'Ылғалдылық',
+    forecast5dayTitle: '5 күнге болжам',
+
+    // Chart AI Insights
+    aiAnalysisShort: 'ЖИ-талдау',
+    generateAIInsight: 'ЖИ-талдау жасау',
+    rateLimitedTryAgain: 'Шектеу. Әрекетті қайталаңыз',
+    secondsSuffix: 'с',
+
+    // Energy Chart
+    energyChartTitle: 'Энергия тұтыну және өндіріс',
+    consumptionMW: 'Тұтыну (МВт)',
+    productionMW: 'Өндіріс (МВт)',
+
+    // Transport Chart
+    transportChartTitle: 'Қоғамдық көлік қолдану',
+    busLabel: 'Автобус',
+    metroLabel: 'Метро',
+    tramLabel: 'Трамвай',
+
+    // Water Chart
+    waterChartTitle: 'Секторлар бойынша су тұтыну (м³)',
+    residentialLabel: 'Тұрғын',
+    commercialLabel: 'Коммерч.',
+    industrialLabel: 'Өнеркәсіп',
+
+    // Traffic Map
+    trafficMapTitle: 'Интерактивті трафик картасы',
+    interactiveBadge: 'Интерактив',
+    activeIncidentsLabel: 'Белсенді оқиғалар',
+    avgSpeedCity: 'Орт. жылдамдық',
+    congestionZones: 'Кептеліс аймақтары',
+    speedLabel: 'Жылдамдық',
+    vehiclesLabel: 'Көлік',
+    incidentsLabel: 'Оқиғалар',
+    aiAnalysisBadge: 'ЖИ-талдау',
+    trafficMapHeavy: 'Ауыр',
+    trafficMapModerate: 'Орташа',
+    trafficMapLight: 'Жеңіл',
+    sensorsLabel: 'Сенсорлар',
+
+    // Weather Map
+    weatherMapTitle: 'Ауа райы мониторинг картасы',
+    tempShort: 'Темп.',
+    humidityShort: 'Ылғал.',
+    avgTemp: 'Орт. температура',
+    avgHumidity: 'Орт. ылғалдылық',
+    sunnyZones: 'Ашық аймақтар',
+    weatherAIForecast: 'ЖИ-ауа райы болжамы',
+    pressureLabel: 'Қысым',
+
+    // Date Range Filter
+    periodLabel: 'Кезең',
+    categoryLabel: 'Санат',
+    shownLabel: 'Көрсетілген',
+    allCategoriesLabel: 'Барлық санаттар',
+
+    // Debug Panel
+    debugPanelTitle: 'Түзету режимі',
+    resetTooltip: 'Мәндерді қалпына келтіру',
+    closeDebugTooltip: 'Түзету панелін жабу',
+    regenerateAllDebug: 'Барлық ЖИ-талдауларды қайта жасау',
+    debugGenerating: 'Генерация...',
+    energySectionTitle: 'Энергия (МВт)',
+    transportSectionTitle: 'Көлік (дана)',
+    waterSectionTitle: 'Су (м³)',
+    weatherSectionTitle: 'Ауа райы',
+    debugFooter: 'Өзгерістер келесі ЖИ генерациясында қолданылады',
+    consumptionLabel: 'Тұтыну',
+    productionLabel: 'Өндіріс',
+    busesLabel: 'Автобустар',
+    tramsLabel: 'Трамвайлар',
+    residentialShortLabel: 'Тұрғын',
+    commercialShortLabel: 'Коммерч.',
+    industrialShortLabel: 'Өнеркәсіп',
+    tempLabelShort: 'Темп. (°C)',
+    windLabelShort: 'Жел (км/ч)',
+    humidityLabelShort: 'Ылғалдылық (%)',
+    conditionLabelShort: 'Жағдай',
   },
   en: {
     // Header
@@ -444,6 +650,109 @@ export const translations = {
     incidentOther: 'Other',
     incidentsLog: 'Incidents Log',
     noIncidents: 'No incidents reported',
+
+    // Default AI Insights
+    energyDefaultInsight: 'Network stability is normal. Consumption trends match forecasts.',
+    transportDefaultInsight: 'Metro is most in demand. Dynamic route adjustment recommended.',
+    waterDefaultInsight: 'Water volumes are stable across all sectors. No anomalies detected.',
+
+    // Traffic Widget
+    trafficStatusTitle: 'Traffic Status',
+    activeIncidentsAlert: 'active incidents',
+    trafficHeavyAlert: 'Heavy congestion in Almaly district. Consider alternative routes.',
+    trafficHeavy: 'Heavy',
+    trafficModerate: 'Moderate',
+    trafficLight: 'Light',
+    trafficLabel: 'traffic',
+    incidentsCount: 'incidents',
+    avgSpeedLabel: 'Avg Speed',
+    vehiclesPerMinLabel: 'Vehicles/min',
+    avgCommuteLabel: 'Avg Commute',
+
+    // Weather Widget
+    weatherForecastTitle: 'Weather Forecast',
+    weatherConditionsTitle: 'Weather Conditions',
+    forecastBadge: 'Forecast',
+    windSpeedLabel: 'Wind Speed',
+    humidityLabel: 'Humidity',
+    forecast5dayTitle: '5-Day Forecast',
+
+    // Chart AI Insights
+    aiAnalysisShort: 'AI Analysis',
+    generateAIInsight: 'Generate AI Insight',
+    rateLimitedTryAgain: 'Rate limited. Try again in',
+    secondsSuffix: 's',
+
+    // Energy Chart
+    energyChartTitle: 'Energy Consumption & Production',
+    consumptionMW: 'Consumption (MW)',
+    productionMW: 'Production (MW)',
+
+    // Transport Chart
+    transportChartTitle: 'Public Transport Usage',
+    busLabel: 'Bus',
+    metroLabel: 'Metro',
+    tramLabel: 'Tram',
+
+    // Water Chart
+    waterChartTitle: 'Water Usage by Sector (m³)',
+    residentialLabel: 'Residential',
+    commercialLabel: 'Commercial',
+    industrialLabel: 'Industrial',
+
+    // Traffic Map
+    trafficMapTitle: 'Interactive Traffic Map',
+    interactiveBadge: 'Interactive',
+    activeIncidentsLabel: 'Active Incidents',
+    avgSpeedCity: 'Avg Speed',
+    congestionZones: 'Congestion Zones',
+    speedLabel: 'Speed',
+    vehiclesLabel: 'Vehicles',
+    incidentsLabel: 'Incidents',
+    aiAnalysisBadge: 'AI Analysis',
+    trafficMapHeavy: 'Heavy',
+    trafficMapModerate: 'Moderate',
+    trafficMapLight: 'Light',
+    sensorsLabel: 'Sensors',
+
+    // Weather Map
+    weatherMapTitle: 'Weather Monitoring Map',
+    tempShort: 'Temp',
+    humidityShort: 'Humid.',
+    avgTemp: 'Avg Temperature',
+    avgHumidity: 'Avg Humidity',
+    sunnyZones: 'Sunny Zones',
+    weatherAIForecast: 'AI Weather Forecast',
+    pressureLabel: 'Pressure',
+
+    // Date Range Filter
+    periodLabel: 'Period',
+    categoryLabel: 'Category',
+    shownLabel: 'Showing',
+    allCategoriesLabel: 'All Categories',
+
+    // Debug Panel
+    debugPanelTitle: 'Debug Mode',
+    resetTooltip: 'Reset values',
+    closeDebugTooltip: 'Close debug panel',
+    regenerateAllDebug: 'Regenerate All AI Insights',
+    debugGenerating: 'Generating...',
+    energySectionTitle: 'Energy (MW)',
+    transportSectionTitle: 'Transport (units)',
+    waterSectionTitle: 'Water (m³)',
+    weatherSectionTitle: 'Weather',
+    debugFooter: 'Changes will apply on next AI generation',
+    consumptionLabel: 'Consumption',
+    productionLabel: 'Production',
+    busesLabel: 'Buses',
+    tramsLabel: 'Trams',
+    residentialShortLabel: 'Residential',
+    commercialShortLabel: 'Commercial',
+    industrialShortLabel: 'Industrial',
+    tempLabelShort: 'Temp (°C)',
+    windLabelShort: 'Wind (km/h)',
+    humidityLabelShort: 'Humidity (%)',
+    conditionLabelShort: 'Condition',
   },
 };
 

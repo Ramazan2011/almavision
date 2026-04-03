@@ -5,15 +5,17 @@ import { Card } from './ui/card';
 import { EnergyData } from '../services/simulationService';
 import { generateChartInsight } from '../services/llmService';
 import { getCooldownSeconds, useCooldownState } from '../services/cooldownService';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
-const DEFAULT_INSIGHT = 'Стабильность сети в норме за этот период. Тренды потребления соответствуют прогнозируемым показателям.';
+const DEFAULT_INSIGHT_KEY = 'energyDefaultInsight';
 
 interface EnergyChartProps {
   data: EnergyData[];
 }
 
 function EnergyAIInsight({ data }: { data: EnergyData[] }) {
-  const [insight, setInsight] = useState(DEFAULT_INSIGHT);
+  const { t } = useAppSettings();
+  const [insight, setInsight] = useState(t('energyDefaultInsight'));
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [cooldownLeft, setCooldownLeft] = useState(0);
@@ -37,9 +39,9 @@ function EnergyAIInsight({ data }: { data: EnergyData[] }) {
     generateChartInsight(
       { chartType: 'Energy Consumption & Production Line Chart', dataSummary, prompt: '' },
       {
-        onChunk: (text) => { if (keyRef.current === currentKey) setInsight(prev => prev + text); },
+        onChunk: (text: string) => { if (keyRef.current === currentKey) setInsight((prev: string) => prev + text); },
         onComplete: () => { if (keyRef.current === currentKey) setLoading(false); },
-        onError: () => { if (keyRef.current === currentKey) { setInsight(DEFAULT_INSIGHT); setLoading(false); } }
+        onError: () => { if (keyRef.current === currentKey) { setInsight(t('energyDefaultInsight')); setLoading(false); } }
       }
     ).then(result => {
       if (keyRef.current === currentKey && insight === '') {
@@ -52,7 +54,7 @@ function EnergyAIInsight({ data }: { data: EnergyData[] }) {
   return (
     <div>
       <div className="text-xs font-medium text-purple-900 mb-1 flex items-center gap-1">
-        ИИ-анализ
+        {t('aiAnalysisShort')}
         {loading && <Loader2 className="w-3 h-3 animate-spin" />}
       </div>
       <p className="text-xs text-gray-700 min-h-[2.5rem]">
@@ -65,11 +67,11 @@ function EnergyAIInsight({ data }: { data: EnergyData[] }) {
           disabled={getCooldownSeconds() > 0}
           className="mt-1 text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Wand2 className="w-3 h-3" /> Сгенерировать ИИ-анализ
+          <Wand2 className="w-3 h-3" /> {t('generateAIInsight')}
         </button>
       ) : cooldownLeft > 0 ? (
         <div className="mt-1 text-xs text-amber-600 flex items-center gap-1">
-          <Clock className="w-3 h-3" /> Ограничение. Попробуйте через {cooldownLeft}с
+          <Clock className="w-3 h-3" /> {t('rateLimitedTryAgain')} {cooldownLeft}{t('secondsSuffix')}
         </div>
       ) : null}
     </div>
@@ -77,9 +79,10 @@ function EnergyAIInsight({ data }: { data: EnergyData[] }) {
 }
 
 export function EnergyChart({ data }: EnergyChartProps) {
+  const { t } = useAppSettings();
   return (
     <Card className="p-6">
-      <h2 className="text-lg mb-1">Потребление и производство энергии</h2>
+      <h2 className="text-lg mb-1">{t('energyChartTitle')}</h2>
       <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200 flex gap-2">
         <Sparkles className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
         <EnergyAIInsight data={data} />
@@ -104,7 +107,7 @@ export function EnergyChart({ data }: EnergyChartProps) {
             dataKey="consumption"
             stroke="#ef4444"
             strokeWidth={2}
-            name="Потребление (МВт)"
+            name={t('consumptionMW')}
             id="consumption-line"
           />
           <Line
@@ -113,7 +116,7 @@ export function EnergyChart({ data }: EnergyChartProps) {
             dataKey="production"
             stroke="#10b981"
             strokeWidth={2}
-            name="Производство (МВт)"
+            name={t('productionMW')}
             id="production-line"
           />
         </LineChart>

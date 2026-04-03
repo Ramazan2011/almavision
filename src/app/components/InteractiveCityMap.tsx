@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 import { Card } from './ui/card';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 interface MapZone {
   id: string;
@@ -14,14 +15,15 @@ interface MapZone {
 }
 
 export function InteractiveCityMap() {
+  const { t } = useAppSettings();
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const zones: MapZone[] = [
-    { id: '1', name: 'Центр', x: 150, y: 120, width: 100, height: 80, status: 'heavy', incidents: 3 },
-    { id: '2', name: 'Северный', x: 140, y: 30, width: 120, height: 70, status: 'moderate', incidents: 1 },
-    { id: '3', name: 'Восточный', x: 270, y: 100, width: 110, height: 90, status: 'light', incidents: 0 },
-    { id: '4', name: 'Западный', x: 20, y: 90, width: 110, height: 100, status: 'moderate', incidents: 2 },
-    { id: '5', name: 'Южный', x: 160, y: 220, width: 100, height: 80, status: 'light', incidents: 0 },
+    { id: '1', name: t('almaly'), x: 150, y: 120, width: 100, height: 80, status: 'heavy', incidents: 3 },
+    { id: '2', name: t('turksib'), x: 140, y: 30, width: 120, height: 70, status: 'moderate', incidents: 1 },
+    { id: '3', name: t('medeu'), x: 270, y: 100, width: 110, height: 90, status: 'light', incidents: 0 },
+    { id: '4', name: t('bostandyk'), x: 20, y: 90, width: 110, height: 100, status: 'moderate', incidents: 2 },
+    { id: '5', name: t('auezov'), x: 160, y: 220, width: 100, height: 80, status: 'light', incidents: 0 },
   ];
 
   const getStatusColor = (status: string) => {
@@ -42,12 +44,21 @@ export function InteractiveCityMap() {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'heavy': return t('trafficMapHeavy');
+      case 'moderate': return t('trafficMapModerate');
+      case 'light': return t('trafficMapLight');
+      default: return t('trafficMapLight');
+    }
+  };
+
   const selectedZoneData = zones.find(z => z.id === selectedZone);
 
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg">Интерактивная карта трафика</h2>
+        <h2 className="text-lg">{t('trafficMapTitle')}</h2>
         <Navigation className="w-5 h-5 text-gray-500" />
       </div>
 
@@ -126,12 +137,12 @@ export function InteractiveCityMap() {
             <div>
               <h3 className="text-sm mb-1">{selectedZoneData.name}</h3>
               <p className="text-xs text-gray-600 mb-2">
-                Статус: <span className="capitalize font-medium">{selectedZoneData.status === 'heavy' ? 'Сильный' : selectedZoneData.status === 'moderate' ? 'Умеренный' : 'Лёгкий'}</span>
+                {t('trafficStatusTitle')}: <span className="capitalize font-medium">{getStatusText(selectedZoneData.status)}</span>
               </p>
               <p className="text-xs text-gray-600">
                 {selectedZoneData.incidents > 0
-                  ? `${selectedZoneData.incidents} активных инцидентов`
-                  : 'Инцидентов не reported'}
+                  ? `${selectedZoneData.incidents} ${t('activeIncidentsAlert')}`
+                  : t('noIncidents')}
               </p>
             </div>
           </div>
@@ -141,19 +152,19 @@ export function InteractiveCityMap() {
       <div className="mt-4 flex items-center gap-4 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-green-500"></div>
-          <span>Лёгкий</span>
+          <span>{t('trafficMapLight')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-yellow-500"></div>
-          <span>Умеренный</span>
+          <span>{t('trafficMapModerate')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-red-500"></div>
-          <span>Сильный</span>
+          <span>{t('trafficMapHeavy')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-blue-500"></div>
-          <span>Датчики</span>
+          <span>{t('sensorsLabel')}</span>
         </div>
       </div>
     </Card>

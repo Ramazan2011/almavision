@@ -4,6 +4,7 @@ import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import L from 'leaflet';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 // Fix for default Leaflet icon paths in Vite/Webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -100,13 +101,23 @@ export function EnhancedWeatherMap() {
   const avgTemp = Math.round(weatherPoints.reduce((sum, p) => sum + p.temp, 0) / weatherPoints.length);
   const avgHumidity = Math.round(weatherPoints.reduce((sum, p) => sum + p.humidity, 0) / weatherPoints.length);
 
+  const { t } = useAppSettings();
+
+  const getConditionText = (condition: string) => {
+    switch (condition) {
+      case 'sunny': return t('sunny');
+      case 'rainy': return t('rainy');
+      default: return t('cloudy');
+    }
+  };
+
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg">Карта мониторинга погоды</h2>
+          <h2 className="text-lg">{t('weatherMapTitle')}</h2>
           <Badge variant="outline" className="text-xs">
-            Интерактив
+            {t('interactiveBadge')}
           </Badge>
         </div>
         <div className="flex items-center gap-2">
@@ -114,7 +125,7 @@ export function EnhancedWeatherMap() {
             onClick={() => setShowTemperature(!showTemperature)}
             className="text-xs px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            {showTemperature ? '🌡️ Темп.' : '💧 Влажн.'}
+            {showTemperature ? `🌡️ ${t('tempShort')}` : `💧 ${t('humidityShort')}`}
           </button>
           <Wind className="w-5 h-5 text-gray-500" />
         </div>
@@ -124,15 +135,15 @@ export function EnhancedWeatherMap() {
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="bg-gradient-to-br from-orange-50 to-yellow-50 p-3 rounded-lg text-center border border-orange-200">
           <div className="text-2xl">{avgTemp}°C</div>
-          <div className="text-xs text-gray-600">Ср. температура</div>
+          <div className="text-xs text-gray-600">{t('avgTemp')}</div>
         </div>
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 rounded-lg text-center border border-blue-200">
           <div className="text-2xl">{avgHumidity}%</div>
-          <div className="text-xs text-gray-600">Ср. влажность</div>
+          <div className="text-xs text-gray-600">{t('avgHumidity')}</div>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-lg text-center border border-green-200">
           <div className="text-2xl">{weatherPoints.filter(p => p.condition === 'sunny').length}</div>
-          <div className="text-xs text-gray-600">Ясных зон</div>
+          <div className="text-xs text-gray-600">{t('sunnyZones')}</div>
         </div>
       </div>
 
@@ -183,33 +194,33 @@ export function EnhancedWeatherMap() {
                   variant="outline"
                   className="text-xs capitalize"
                 >
-                  {selectedPointData.condition === 'sunny' ? 'Ясно' : selectedPointData.condition === 'rainy' ? 'Дождь' : 'Облачно'}
+                  {getConditionText(selectedPointData.condition)}
                 </Badge>
               </h3>
               <div className="grid grid-cols-4 gap-2 my-2 text-xs">
                 <div className="bg-white p-2 rounded border">
                   <div className="text-gray-600 flex items-center gap-1">
                     <Thermometer className="w-3 h-3" />
-                    Темп.
+                    {t('tempLabel')}
                   </div>
                   <div className="font-medium">{selectedPointData.temp}°C</div>
                 </div>
                 <div className="bg-white p-2 rounded border">
                   <div className="text-gray-600 flex items-center gap-1">
                     <Droplets className="w-3 h-3" />
-                    Влажн.
+                    {t('humidityLabel')}
                   </div>
                   <div className="font-medium">{selectedPointData.humidity}%</div>
                 </div>
                 <div className="bg-white p-2 rounded border">
                   <div className="text-gray-600 flex items-center gap-1">
                     <Wind className="w-3 h-3" />
-                    Ветер
+                    {t('windLabel')}
                   </div>
                   <div className="font-medium">{selectedPointData.windSpeed} км/ч</div>
                 </div>
                 <div className="bg-white p-2 rounded border">
-                  <div className="text-gray-600">Давл.</div>
+                  <div className="text-gray-600">{t('pressureLabel')}</div>
                   <div className="font-medium">{selectedPointData.pressure} мб</div>
                 </div>
               </div>
@@ -218,7 +229,7 @@ export function EnhancedWeatherMap() {
           <div className="flex gap-2 p-3 bg-white rounded border border-purple-200">
             <Sparkles className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="text-xs font-medium text-purple-900 mb-1">ИИ-прогноз погоды</div>
+              <div className="text-xs font-medium text-purple-900 mb-1">{t('weatherAIForecast')}</div>
               <p className="text-xs text-gray-700">{selectedPointData.aiInsight}</p>
             </div>
           </div>
@@ -228,15 +239,15 @@ export function EnhancedWeatherMap() {
       <div className="flex items-center gap-4 text-xs flex-wrap">
         <div className="flex items-center gap-2">
           <Sun className="w-4 h-4 text-yellow-500" />
-          <span>Ясно</span>
+          <span>{t('sunny')}</span>
         </div>
         <div className="flex items-center gap-2">
           <Cloud className="w-4 h-4 text-gray-500" />
-          <span>Облачно</span>
+          <span>{t('cloudy')}</span>
         </div>
         <div className="flex items-center gap-2">
           <CloudRain className="w-4 h-4 text-blue-500" />
-          <span>Дождь</span>
+          <span>{t('rainy')}</span>
         </div>
       </div>
     </Card>
