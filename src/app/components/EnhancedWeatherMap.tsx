@@ -1,10 +1,39 @@
-import React, { useState } from 'react';
-import { Cloud, CloudRain, Sun, Wind, Droplets, Thermometer, Sparkles } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Cloud, CloudRain, Sun, Wind, Droplets, Thermometer, Sparkles, Wand2, Clock, Loader2 } from 'lucide-react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useAppSettings } from '../contexts/AppSettingsContext';
+import { generateChartInsight } from '../services/llmService';
+import { getCooldownSeconds, useCooldownState } from '../services/cooldownService';
+
+// Component to update tile layer based on theme
+function DarkModeTileLayer() {
+  const map = useMap();
+  const { settings } = useAppSettings();
+  const isDark = settings.theme === 'dark';
+  
+  useEffect(() => {
+    // Remove existing tile layers
+    map.eachLayer((layer) => {
+      if (layer instanceof L.TileLayer) {
+        map.removeLayer(layer);
+      }
+    });
+    
+    // Add appropriate tile layer
+    const url = isDark
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+    
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
+    
+    L.tileLayer(url, { attribution }).addTo(map);
+  }, [isDark, map]);
+  
+  return null;
+}
 
 // Fix for default Leaflet icon paths in Vite/Webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -28,8 +57,44 @@ interface WeatherPoint {
 }
 
 export function EnhancedWeatherMap() {
+  const { t } = useAppSettings();
   const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
   const [showTemperature, setShowTemperature] = useState(true);
+  const [aiInsight, setAiInsight] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiGenerated, setAiGenerated] = useState(false);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
+  const keyRef = useRef(0);
+
+  useEffect(() => {
+    const { subscribe } = useCooldownState();
+    return subscribe((seconds) => setCooldownLeft(seconds));
+  }, []);
+
+  const handleGenerateAI = () => {
+    if (aiLoading || getCooldownSeconds() > 0 || !selectedPointData) return;
+    keyRef.current++;
+    const currentKey = keyRef.current;
+    setAiLoading(true);
+    setAiInsight('');
+    setAiGenerated(true);
+
+    const dataSummary = `Zone: ${selectedPointData.name}, Temp: ${selectedPointData.temp}°C, Condition: ${selectedPointData.condition}, Humidity: ${selectedPointData.humidity}%, Wind: ${selectedPointData.windSpeed} km/h, Pressure: ${selectedPointData.pressure} mb`;
+
+    generateChartInsight(
+      { chartType: 'Weather Zone Analysis', dataSummary, prompt: '' },
+      {
+        onChunk: (text: string) => { if (keyRef.current === currentKey) setAiInsight((prev: string) => prev + text); },
+        onComplete: () => { if (keyRef.current === currentKey) setAiLoading(false); },
+        onError: () => { if (keyRef.current === currentKey) { setAiInsight(t('aiError')); setAiLoading(false); } }
+      }
+    ).then(result => {
+      if (keyRef.current === currentKey && aiInsight === '') {
+        setAiInsight(result);
+        setAiLoading(false);
+      }
+    });
+  };
 
   const weatherPoints: WeatherPoint[] = [
     {
@@ -101,8 +166,6 @@ export function EnhancedWeatherMap() {
   const avgTemp = Math.round(weatherPoints.reduce((sum, p) => sum + p.temp, 0) / weatherPoints.length);
   const avgHumidity = Math.round(weatherPoints.reduce((sum, p) => sum + p.humidity, 0) / weatherPoints.length);
 
-  const { t } = useAppSettings();
-
   const getConditionText = (condition: string) => {
     switch (condition) {
       case 'sunny': return t('sunny');
@@ -123,7 +186,7 @@ export function EnhancedWeatherMap() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowTemperature(!showTemperature)}
-            className="text-xs px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="text-xs px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             {showTemperature ? `🌡️ ${t('tempShort')}` : `💧 ${t('humidityShort')}`}
           </button>
@@ -133,26 +196,23 @@ export function EnhancedWeatherMap() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-gradient-to-br from-orange-50 to-yellow-50 p-3 rounded-lg text-center border border-orange-200">
+        <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-800 p-3 rounded-lg text-center border border-orange-200 dark:border-orange-900">
           <div className="text-2xl">{avgTemp}°C</div>
-          <div className="text-xs text-gray-600">{t('avgTemp')}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('avgTemp')}</div>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 rounded-lg text-center border border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-800 p-3 rounded-lg text-center border border-blue-200 dark:border-blue-900">
           <div className="text-2xl">{avgHumidity}%</div>
-          <div className="text-xs text-gray-600">{t('avgHumidity')}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('avgHumidity')}</div>
         </div>
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-lg text-center border border-green-200">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 p-3 rounded-lg text-center border border-green-200 dark:border-green-900">
           <div className="text-2xl">{weatherPoints.filter(p => p.condition === 'sunny').length}</div>
-          <div className="text-xs text-gray-600">{t('sunnyZones')}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('sunnyZones')}</div>
         </div>
       </div>
 
-      <div className="rounded-lg overflow-hidden border border-gray-200 mb-4 bg-gray-100" style={{ height: '320px', zIndex: 0 }}>
+      <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 mb-4 bg-gray-100 dark:bg-gray-800" style={{ height: '320px', zIndex: 0 }}>
         <MapContainer center={[43.2389, 76.8897]} zoom={11} scrollWheelZoom={true} style={{ height: '100%', width: '100%', zIndex: 10 }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          />
+          <DarkModeTileLayer />
           
           {weatherPoints.map((point) => (
             <React.Fragment key={point.id}>
@@ -184,7 +244,7 @@ export function EnhancedWeatherMap() {
       </div>
 
       {selectedPointData && (
-        <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+        <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-lg border border-blue-200 dark:border-gray-700">
           <div className="flex items-start gap-3 mb-3">
             <Thermometer className="w-5 h-5 text-blue-600 mt-0.5" />
             <div className="flex-1">
@@ -198,39 +258,58 @@ export function EnhancedWeatherMap() {
                 </Badge>
               </h3>
               <div className="grid grid-cols-4 gap-2 my-2 text-xs">
-                <div className="bg-white p-2 rounded border">
-                  <div className="text-gray-600 flex items-center gap-1">
+                <div className="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">
+                  <div className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                     <Thermometer className="w-3 h-3" />
                     {t('tempLabel')}
                   </div>
-                  <div className="font-medium">{selectedPointData.temp}°C</div>
+                  <div className="font-medium dark:text-gray-200">{selectedPointData.temp}°C</div>
                 </div>
-                <div className="bg-white p-2 rounded border">
-                  <div className="text-gray-600 flex items-center gap-1">
+                <div className="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">
+                  <div className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                     <Droplets className="w-3 h-3" />
                     {t('humidityLabel')}
                   </div>
-                  <div className="font-medium">{selectedPointData.humidity}%</div>
+                  <div className="font-medium dark:text-gray-200">{selectedPointData.humidity}%</div>
                 </div>
-                <div className="bg-white p-2 rounded border">
-                  <div className="text-gray-600 flex items-center gap-1">
+                <div className="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">
+                  <div className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                     <Wind className="w-3 h-3" />
                     {t('windLabel')}
                   </div>
-                  <div className="font-medium">{selectedPointData.windSpeed} км/ч</div>
+                  <div className="font-medium dark:text-gray-200">{selectedPointData.windSpeed} км/ч</div>
                 </div>
-                <div className="bg-white p-2 rounded border">
-                  <div className="text-gray-600">{t('pressureLabel')}</div>
-                  <div className="font-medium">{selectedPointData.pressure} мб</div>
+                <div className="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">
+                  <div className="text-gray-600 dark:text-gray-400">{t('pressureLabel')}</div>
+                  <div className="font-medium dark:text-gray-200">{selectedPointData.pressure} мб</div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex gap-2 p-3 bg-white rounded border border-purple-200">
-            <Sparkles className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="text-xs font-medium text-purple-900 mb-1">{t('weatherAIForecast')}</div>
-              <p className="text-xs text-gray-700">{selectedPointData.aiInsight}</p>
+          <div className="flex gap-2 p-3 bg-white dark:bg-gray-800 rounded border border-purple-200 dark:border-purple-800">
+            <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <div className="text-xs font-medium text-purple-900 dark:text-purple-300 mb-1 flex items-center gap-1">
+                {t('weatherAIForecast')}
+                {aiLoading && <Loader2 className="w-3 h-3 animate-spin" />}
+              </div>
+              <p className="text-xs text-gray-700 dark:text-gray-300 min-h-[2rem]">
+                {aiInsight || selectedPointData.aiInsight}
+                {aiLoading && <span className="inline-block w-0.5 h-3 bg-purple-500 ml-0.5 animate-pulse" />}
+              </p>
+              {!aiGenerated ? (
+                <button
+                  onClick={handleGenerateAI}
+                  disabled={getCooldownSeconds() > 0}
+                  className="mt-1 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Wand2 className="w-3 h-3" /> {t('generateAIInsight')}
+                </button>
+              ) : cooldownLeft > 0 ? (
+                <div className="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {t('rateLimitedTryAgain')} {cooldownLeft}{t('secondsSuffix')}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

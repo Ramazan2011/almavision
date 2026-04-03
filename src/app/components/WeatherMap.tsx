@@ -107,10 +107,10 @@ export function WeatherMap() {
           { icon: Cloud, label: 'Cloudy Areas', value: '2', color: 'text-gray-600' },
           { icon: CloudRain, label: 'Rainy Areas', value: '1', color: 'text-blue-600' },
         ].map((item) => (
-          <div key={item.label} className="text-center p-2 bg-gray-50 rounded">
+          <div key={item.label} className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
             <item.icon className={`w-5 h-5 mx-auto mb-1 ${item.color}`} />
-            <div className="text-xs text-gray-600">{item.label}</div>
-            <div className="text-sm">{item.value}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">{item.label}</div>
+            <div className="text-sm dark:text-gray-200">{item.value}</div>
           </div>
         ))}
       </div>

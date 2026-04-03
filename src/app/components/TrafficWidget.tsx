@@ -28,12 +28,12 @@ export function TrafficWidget() {
         <Car className="w-5 h-5 text-gray-500" />
       </div>
 
-      <div className="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
+      <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
         <div className="flex items-center gap-2 mb-2">
-          <AlertTriangle className="w-5 h-5 text-red-600" />
-          <span className="text-red-800">6 {t('activeIncidentsAlert')}</span>
+          <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+          <span className="text-red-800 dark:text-red-300">6 {t('activeIncidentsAlert')}</span>
         </div>
-        <div className="text-sm text-red-700">
+        <div className="text-sm text-red-700 dark:text-red-400">
           {t('trafficHeavyAlert')}
         </div>
       </div>

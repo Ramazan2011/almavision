@@ -83,8 +83,8 @@ export function EnergyChart({ data }: EnergyChartProps) {
   return (
     <Card className="p-6">
       <h2 className="text-lg mb-1">{t('energyChartTitle')}</h2>
-      <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200 flex gap-2">
-        <Sparkles className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+      <div className="mb-4 p-3 bg-purple-50 dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-800 flex gap-2">
+        <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
         <EnergyAIInsight data={data} />
       </div>
       <ResponsiveContainer width="100%" height={300}>
