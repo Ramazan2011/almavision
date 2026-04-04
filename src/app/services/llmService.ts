@@ -125,7 +125,7 @@ export async function generateInsights(
 
   try {
     // Langdock API Endpoint
-    const response = await fetch('https://api.langdock.com/openai/eu/v1', {
+    const response = await fetch('https://cors-anywhere.herokuapp.com/https://api.langdock.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
