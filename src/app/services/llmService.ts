@@ -125,7 +125,7 @@ export async function generateInsights(
 
   try {
     // Langdock API Endpoint
-    const response = await fetch('https://api.langdock.com/v1/chat/completions', {
+    const response = await fetch('https://api.langdock.com/openai/eu/v1', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -191,7 +191,7 @@ export async function generateChartInsight(
   if (!apiKey) return 'API Key missing.';
 
   try {
-    const response = await fetch('https://api.langdock.com/v1/chat/completions', {
+    const response = await fetch('https://api.langdock.com/openai/eu/v1', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
