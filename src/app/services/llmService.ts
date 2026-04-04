@@ -1,4 +1,4 @@
-import { getLangdockApiKey } from './configService';
+import { getOpenRouterApiKey } from './configService';
 
 export type InsightSeverity = 'critical' | 'warning' | 'info' | 'success' | 'danger' | 'caution';
 
@@ -41,7 +41,7 @@ const DEFAULT_INSIGHTS: AIInsight[] = [
   {
     type: 'warning',
     title: 'Оптимизация энергии',
-    message: 'Пиковое потребление энергии ожидается в 16:00. Рекомендуется перенести неважные операции на ночное время.',
+    message: 'Пиковое потребление энергии ожидается в 16:00.',
     icon: 'Zap',
   },
   {
@@ -57,10 +57,8 @@ function parseJSONResponse(content: string): AIInsight[] | null {
     let cleaned = content.trim().replace(/^```json\s*\n?/i, '').replace(/\n?\s*```$/i, '');
     cleaned = cleaned.replace(/^```\s*\n?/i, '').replace(/\n?\s*```$/i, '').trim();
     const parsed = JSON.parse(cleaned);
-    
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
       if (Array.isArray(parsed.insights)) return parsed.insights;
-      if (Array.isArray(parsed.data)) return parsed.data;
       const values = Object.values(parsed);
       for (const val of values) {
         if (Array.isArray(val) && val.length > 0 && (val[0] as any).title) return val as AIInsight[];
@@ -111,10 +109,10 @@ export async function generateInsights(
   context: DashboardContext,
   callbacks?: StreamingCallbacks
 ): Promise<AIInsight[]> {
-  const apiKey = await getLangdockApiKey();
+  const apiKey = await getOpenRouterApiKey();
 
   if (!apiKey) {
-    console.warn('[AI Insights] No Langdock API key found. Check .env file.');
+    console.warn('[AI Insights] No API key found. Falling back to defaults.');
     return DEFAULT_INSIGHTS;
   }
 
@@ -122,11 +120,11 @@ export async function generateInsights(
   const weatherInfo = context.weather ? `${context.weather.temp}°C, ${context.weather.description}` : 'Unknown';
 
   const prompt = `You are an expert AI Smart City Analyst for Almaty. 
-  LANGUAGE: Russian.
-  CONTEXT: Zone ${zoneName}, Weather ${weatherInfo}, Transport ${context.latestTransport}, Energy ${context.latestEnergy} MW.
-  FORMAT: JSON object with "shortTerm" and "longTerm" arrays. No markdown.`;
+  Output ONLY JSON in Russian language with "shortTerm" and "longTerm" arrays.
+  Context: Zone ${zoneName}, Weather ${weatherInfo}, Transport ${context.latestTransport}, Energy ${context.latestEnergy} MW.`;
 
   try {
+    // Langdock API Endpoint
     const response = await fetch('https://api.langdock.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -134,9 +132,9 @@ export async function generateInsights(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o', // Replace with your Langdock deployment name
+        model: 'gpt-4o', // Replace with your Langdock deployment ID
         messages: [
-          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output ONLY JSON in Russian. Use "shortTerm" and "longTerm" keys.' },
+          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output ONLY JSON in Russian.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
@@ -144,7 +142,7 @@ export async function generateInsights(
       })
     });
 
-    if (!response.ok || !response.body) throw new Error(`Langdock API Error: ${response.status}`);
+    if (!response.ok || !response.body) throw new Error(`API Error: ${response.status}`);
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -189,7 +187,7 @@ export async function generateChartInsight(
   config: ChartInsightConfig,
   callbacks?: StreamingCallbacks
 ): Promise<string> {
-  const apiKey = await getLangdockApiKey();
+  const apiKey = await getOpenRouterApiKey();
   if (!apiKey) return 'API Key missing.';
 
   try {
@@ -202,8 +200,8 @@ export async function generateChartInsight(
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [
-          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output one concise sentence in Russian.' },
-          { role: 'user', content: `Analyze this ${config.chartType} data for Almaty: ${config.dataSummary}` }
+          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. One sentence in Russian.' },
+          { role: 'user', content: `Analyze: ${config.dataSummary}` }
         ],
         temperature: 0.7,
         stream: true,
