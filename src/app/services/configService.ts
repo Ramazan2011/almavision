@@ -1,41 +1,27 @@
-// Runtime configuration - loaded from public/config.json at runtime
-// This prevents API keys from being bundled into the dist folder
+// Runtime configuration - now pulled from environment variables
+// Note: These must be prefixed with VITE_ to be accessible in the browser
 
 interface RuntimeConfig {
   openrouterApiKey: string;
 }
 
-let config: RuntimeConfig | null = null;
-let configPromise: Promise<RuntimeConfig> | null = null;
+// In Vite, environment variables are available on import.meta.env
+const config: RuntimeConfig = {
+  openrouterApiKey: import.meta.env.VITE_OPENROUTER_API_KEY || '',
+};
 
+/**
+ * Returns the configuration object. 
+ * Kept as async to maintain compatibility with your existing code,
+ * though it now resolves instantly.
+ */
 export async function loadConfig(): Promise<RuntimeConfig> {
-  if (config) {
-    return config;
-  }
-
-  if (!configPromise) {
-    configPromise = fetch('/config.json')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to load config.json');
-        }
-        return response.json();
-      })
-      .then(data => {
-        config = data as RuntimeConfig;
-        return config;
-      })
-      .catch(error => {
-        console.warn('[Config] Failed to load config.json:', error);
-        config = { openrouterApiKey: '' };
-        return config;
-      });
-  }
-
-  return configPromise;
+  return config;
 }
 
+/**
+ * Retrieves the OpenRouter API Key from the environment.
+ */
 export async function getOpenRouterApiKey(): Promise<string> {
-  const cfg = await loadConfig();
-  return cfg.openrouterApiKey || '';
+  return config.openrouterApiKey;
 }
