@@ -132,7 +132,7 @@ export async function generateInsights(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o', // Replace with your Langdock deployment ID
+        model: 'gpt-5.4-mini', // Replace with your Langdock deployment ID
         messages: [
           { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output ONLY JSON in Russian.' },
           { role: 'user', content: prompt }
