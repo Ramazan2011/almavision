@@ -1,35 +1,4 @@
-import { getOpenRouterApiKey } from './configService';
-
-export type InsightSeverity = 'critical' | 'warning' | 'info' | 'success' | 'danger' | 'caution';
-
-export interface AIInsight {
-  type: InsightSeverity;
-  title: string;
-  message: string;
-  icon?: string; 
-}
-
-export interface SplitInsights {
-  shortTerm: AIInsight[];
-  longTerm: AIInsight[];
-}
-
-export interface ChartInsightConfig {
-  dataSummary: string;
-  chartType: string;
-  prompt: string;
-}
-
-export interface DashboardContext {
-  zone: string;
-  dateRange: string;
-  weather: {
-    temp: number;
-    description: string;
-  } | null;
-  latestTransport: number;
-  latestEnergy: number;
-}
+import { DashboardContext, AIInsight, SplitInsights, StreamingCallbacks, ChartInsightConfig } from './types'; // Adjust import path if needed
 
 const DEFAULT_INSIGHTS: AIInsight[] = [
   {
@@ -52,26 +21,10 @@ const DEFAULT_INSIGHTS: AIInsight[] = [
   },
 ];
 
-function parseJSONResponse(content: string): AIInsight[] | null {
-  try {
-    let cleaned = content.trim().replace(/^```json\s*\n?/i, '').replace(/\n?\s*```$/i, '');
-    cleaned = cleaned.replace(/^```\s*\n?/i, '').replace(/\n?\s*```$/i, '').trim();
-    const parsed = JSON.parse(cleaned);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      if (Array.isArray(parsed.insights)) return parsed.insights;
-      const values = Object.values(parsed);
-      for (const val of values) {
-        if (Array.isArray(val) && val.length > 0 && (val[0] as any).title) return val as AIInsight[];
-      }
-      return null;
-    }
-    return Array.isArray(parsed) ? (parsed as AIInsight[]) : null;
-  } catch { return null; }
-}
-
-const VALID_SEVERITIES = new Set(['critical', 'warning', 'info', 'success', 'danger', 'caution']);
+// --- Helper Functions ---
 
 function normalizeInsights(insights: any[]): AIInsight[] {
+  const VALID_SEVERITIES = new Set(['critical', 'warning', 'info', 'success', 'danger', 'caution']);
   return insights.map((insight) => ({
     type: VALID_SEVERITIES.has(insight.type) ? insight.type : 'info',
     title: String(insight.title || 'AI Insight'),
@@ -84,65 +37,46 @@ function parseSplitInsights(content: string): SplitInsights | null {
   try {
     let cleaned = content.trim().replace(/^```json\s*\n?/i, '').replace(/\n?\s*```$/i, '').trim();
     const parsed = JSON.parse(cleaned);
-    if (parsed && typeof parsed === 'object') {
-      const data = parsed.shortTerm !== undefined ? parsed :
-                   parsed.insights?.shortTerm !== undefined ? parsed.insights :
-                   parsed.data?.shortTerm !== undefined ? parsed.data : null;
-      if (data) {
-        return {
-          shortTerm: normalizeInsights(data.shortTerm || []),
-          longTerm: normalizeInsights(data.longTerm || []),
-        };
-      }
+    const data = parsed.shortTerm !== undefined ? parsed :
+                 parsed.insights?.shortTerm !== undefined ? parsed.insights :
+                 parsed.data?.shortTerm !== undefined ? parsed.data : null;
+    if (data) {
+      return {
+        shortTerm: normalizeInsights(data.shortTerm || []),
+        longTerm: normalizeInsights(data.longTerm || []),
+      };
     }
     return null;
   } catch { return null; }
 }
 
-export interface StreamingCallbacks {
-  onChunk?: (text: string) => void;
-  onComplete?: (insights: AIInsight[]) => void;
-  onError?: (error: Error) => void;
-}
+// --- Main Service Functions ---
 
 export async function generateInsights(
   context: DashboardContext,
   callbacks?: StreamingCallbacks
 ): Promise<AIInsight[]> {
-  const apiKey = await getOpenRouterApiKey();
+  const zoneName = context.zone === 'all' ? 'Все районы' : context.zone;
+  const weatherInfo = context.weather ? `${context.weather.temp}°C, ${context.weather.description}` : 'Нет данных';
 
-  if (!apiKey) {
-    console.warn('[AI Insights] No API key found. Falling back to defaults.');
-    return DEFAULT_INSIGHTS;
-  }
-
-  const zoneName = context.zone === 'all' ? 'All Districts' : context.zone;
-  const weatherInfo = context.weather ? `${context.weather.temp}°C, ${context.weather.description}` : 'Unknown';
-
-  const prompt = `You are an expert AI Smart City Analyst for Almaty. 
-  Output ONLY JSON in Russian language with "shortTerm" and "longTerm" arrays.
-  Context: Zone ${zoneName}, Weather ${weatherInfo}, Transport ${context.latestTransport}, Energy ${context.latestEnergy} MW.`;
+  const prompt = `Аналитик Smart City Алматы. 
+  Контекст: Район ${zoneName}, Погода ${weatherInfo}, Транспорт ${context.latestTransport}, Энергия ${context.latestEnergy} МВт. 
+  Выдай JSON с shortTerm (1-3) и longTerm (1-3) на русском языке.`;
 
   try {
-    // Langdock API Endpoint
-    const response = await fetch('https://api.langdock.com/v1/chat/completions', {
+    // We fetch from our LOCAL Vercel API route to bypass CORS
+    const response = await fetch('/api/generate', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-5.4-mini', // Replace with your Langdock deployment ID
         messages: [
-          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output ONLY JSON in Russian.' },
+          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. Output ONLY valid JSON in Russian.' },
           { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        stream: true,
+        ]
       })
     });
 
-    if (!response.ok || !response.body) throw new Error(`API Error: ${response.status}`);
+    if (!response.ok || !response.body) throw new Error(`API Proxy Error: ${response.status}`);
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -152,6 +86,7 @@ export async function generateInsights(
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
+      
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
@@ -178,6 +113,7 @@ export async function generateInsights(
     }
     return DEFAULT_INSIGHTS;
   } catch (error) {
+    console.error('[AI Service] Error:', error);
     callbacks?.onError?.(error as Error);
     return DEFAULT_INSIGHTS;
   }
@@ -187,49 +123,43 @@ export async function generateChartInsight(
   config: ChartInsightConfig,
   callbacks?: StreamingCallbacks
 ): Promise<string> {
-  const apiKey = await getOpenRouterApiKey();
-  if (!apiKey) return 'API Key missing.';
-
   try {
-    const response = await fetch('https://api.langdock.com/openai/eu/v1', {
+    const response = await fetch('/api/generate', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-4o',
         messages: [
-          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. One sentence in Russian.' },
-          { role: 'user', content: `Analyze: ${config.dataSummary}` }
-        ],
-        temperature: 0.7,
-        stream: true,
+          { role: 'system', content: 'You are a Smart City AI analyst for Almaty. One concise sentence in Russian.' },
+          { role: 'user', content: `Проанализируй данные: ${config.dataSummary}` }
+        ]
       })
     });
 
-    if (!response.ok || !response.body) return 'Analysis unavailable.';
+    if (!response.ok || !response.body) return 'Анализ временно недоступен.';
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullContent = '';
-    let buffer = '';
-
+    
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
       for (const line of lines) {
         if (line.startsWith('data: ') && line !== 'data: [DONE]') {
           try {
-            const delta = JSON.parse(line.slice(6)).choices[0].delta.content;
-            if (delta) { fullContent += delta; callbacks?.onChunk?.(delta); }
+            const content = JSON.parse(line.slice(6)).choices[0].delta.content;
+            if (content) {
+              fullContent += content;
+              callbacks?.onChunk?.(content);
+            }
           } catch {}
         }
       }
     }
     return fullContent.trim();
-  } catch { return 'Analysis failed.'; }
+  } catch {
+    return 'Ошибка при получении аналитики.';
+  }
 }
