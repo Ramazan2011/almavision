@@ -357,7 +357,7 @@ Return ONLY the insight text in Russian. No JSON, no markdown, no explanations. 
         'X-Title': 'Smart City Dashboard',
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.6-plus:free',
+        model: 'stepfun/step-3.5-flash:free',
         messages: [
           { role: 'system', content: 'You are a Smart City AI analyst for Almaty. ALL output MUST be in Russian. Return ONLY a single concise insight in Russian. No markdown, no JSON, no explanations.' },
           { role: 'user', content: prompt }
