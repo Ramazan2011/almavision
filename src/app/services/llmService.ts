@@ -231,7 +231,7 @@ Return ONLY a valid JSON object with TWO arrays. No markdown, no code blocks, no
         'X-Title': 'Smart City Dashboard',
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.6-plus:free',
+        model: 'stepfun/step-3.5-flash:free',
         messages: [
           {
             role: 'system',
